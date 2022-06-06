@@ -49,12 +49,12 @@
             >
             </el-input>
           </el-form-item>
-          <el-form-item label="项目介绍" size="normal">
+          <el-form-item label="项目介绍" size="normal" class="quillFormItem">
             <quill-editor
               ref="myTextEditor"
               v-model="content"
               :options="editorOption"
-              style="width: 600px; height: 300px"
+              style="width: 600px; line-height: normal"
             ></quill-editor>
           </el-form-item>
           <el-form-item label="上下架" size="normal">
@@ -147,5 +147,10 @@ export default {
 
 .el-form-item >>> .el-form--label-top .el-form-item__label {
   padding: 0 0 8px;
+}
+
+/* 重写富文本编辑器的宽度和高度 */
+.quill-editor >>> .ql-container {
+  height: 300px;
 }
 </style>

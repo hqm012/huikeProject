@@ -37,7 +37,19 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    // before: require('./mock/mock-server.js')
+    // headers: {
+    //   'Access-Control-Allow-Origin': '*',
+    //   'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,PATCH,OPTIONS',
+    //   'Access-Control-Allow-Headers': 'X-Requested-With,content-type,Authorization'
+    // },
+    proxy: {
+      '/hk-manager-a': {
+        target: "http://proj.kaikeba.com:8088",
+        changeOrigin: true,
+        credentials: 'include'
+      }
+    }
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
