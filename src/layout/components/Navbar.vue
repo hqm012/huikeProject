@@ -58,7 +58,8 @@ export default {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  box-shadow: 0px 2px 4px 0px rgba(0, 21, 41, 0.08);
+  z-index: 1;
 
   .hamburger-container {
     line-height: 46px;

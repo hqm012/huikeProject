@@ -65,6 +65,12 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          style="margin-top: 32px"
+          layout="->,prev, pager, next"
+          :total="50"
+        >
+        </el-pagination>
 
         <el-dialog
           title="项目编辑"
@@ -77,6 +83,21 @@
             label-width="80px"
             label-position="top"
           >
+            <el-form-item label="发布时间" size="normal">
+              <el-date-picker
+                v-model="form.dateValue1"
+                type="date"
+                placeholder="选择日期"
+              >
+              </el-date-picker>
+              <el-time-picker
+                v-model="form.dateValue2"
+                placeholder="任意时间点"
+                style="margin-left: 36px"
+              >
+              </el-time-picker>
+            </el-form-item>
+
             <el-form-item label="项目名称">
               <el-input v-model="form.name" style="width: 300px"></el-input>
             </el-form-item>
@@ -114,6 +135,14 @@
                 resize="none"
               >
               </el-input>
+            </el-form-item>
+            <el-form-item label="项目介绍" size="normal" class="quillFormItem">
+              <quill-editor
+                ref="myTextEditor"
+                v-model="content"
+                :options="editorOption"
+                style="width: 600px; line-height: normal"
+              ></quill-editor>
             </el-form-item>
             <el-form-item label="上下架" size="normal">
               <el-checkbox-group v-model="form.isPutaway">
@@ -170,11 +199,19 @@ export default {
 
       // 弹窗表单数据
       form: {
+        dateValue1: "",
+        dateValue2: "",
         name: "",
         region: "",
         imageUrl: "",
         textarea: "",
         isPutaway: 1,
+      },
+
+      // 富文本内容收集
+      content: "",
+      editorOption: {
+        placeholder: "编辑文章内容",
       },
     };
   },
@@ -233,5 +270,10 @@ export default {
 
 .el-dialog .el-form-item >>> .el-form--label-top .el-form-item__label {
   padding: 0 0 8px;
+}
+
+/* 重写富文本编辑器的宽度和高度 */
+.quill-editor >>> .ql-container {
+  height: 300px;
 }
 </style>
