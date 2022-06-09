@@ -72,8 +72,18 @@ export const constantRoutes = [
         path: 'itemlist',
         name: 'ItemList',
         component: () => import('@/views/itemList/index'),
-        meta: { title: '项目列表' }
-      }
+        meta: { title: '项目列表' },
+        children: [
+          {
+            path: 'itemdetail',
+            name: 'ItemDetail',
+            component: () => import('@/views/itemList/itemDetail'),
+            meta: { title: '项目详情' },
+            hidden: true
+          }
+        ]
+      },
+
     ]
   },
 

@@ -40,6 +40,10 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 Vue.use(VueQuillEditor)
 
+// 将所有api接口挂载到vue原型上
+import api from '@/api'
+Vue.prototype.$api = api;
+
 Vue.config.productionTip = false
 
 new Vue({
