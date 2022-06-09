@@ -10,29 +10,32 @@
           :model="form"
           label-width="80px"
           label-position="top"
+          v-loading="addLoading"
         >
           <el-form-item label="项目名称">
-            <el-input v-model="form.name" style="width: 300px"></el-input>
+            <el-input v-model="form.title" style="width: 300px"></el-input>
           </el-form-item>
           <el-form-item label="所属领域">
             <el-select
-              v-model="form.region"
+              v-model="form.type"
               placeholder="请选择活动区域"
               style="width: 300px"
             >
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
+              <el-option label="基础教育" :value="0"></el-option>
+              <el-option label="职业成长" :value="1"></el-option>
+              <el-option label="企业公益" :value="2"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="封面图片" size="normal">
             <el-upload
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              :action="uploadAction"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
+              :headers="headers"
             >
-              <img v-if="form.imageUrl" :src="form.imageUrl" class="avatar" />
+              <img v-if="form.image" :src="form.image" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon"
                 ><div>点击上传</div>
               </i>
@@ -44,7 +47,7 @@
               type="textarea"
               :rows="2"
               placeholder="摘要仅会在首页的卡片或列表页的卡片上显示，帮助读者快速了解内容，可从项目介绍中复制相关内容粘贴于此处"
-              v-model="form.textarea"
+              v-model="form.description"
               resize="none"
             >
             </el-input>
@@ -52,19 +55,19 @@
           <el-form-item label="项目介绍" size="normal" class="quillFormItem">
             <quill-editor
               ref="myTextEditor"
-              v-model="content"
+              v-model="form.content"
               :options="editorOption"
               style="width: 600px; line-height: normal"
             ></quill-editor>
           </el-form-item>
           <el-form-item label="上下架" size="normal">
-            <el-checkbox-group v-model="form.isPutaway">
+            <el-checkbox-group v-model="form.status">
               <el-checkbox :true-label="1" :false-label="0">开启</el-checkbox>
               <el-checkbox :true-label="0" :false-label="1">关闭</el-checkbox>
             </el-checkbox-group>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary">提交</el-button>
+            <el-button type="primary" @click="addItem">提交</el-button>
             <el-button>取消</el-button>
           </el-form-item>
         </el-form>
@@ -74,39 +77,73 @@
 </template>
 
 <script>
+// 上传文件需要用到的token
+import { getToken } from "@/utils/auth";
+
+import api from "@/api";
+
 export default {
   data() {
     return {
       form: {
-        name: "",
-        region: "",
-        imageUrl: "",
-        textarea: "",
-        isPutaway: 1,
+        title: "",
+        type: undefined,
+        image: "",
+        description: "",
+        status: 1,
+        content: "",
       },
-      content: "",
       editorOption: {
         placeholder: "编辑文章内容",
       },
+      // 控制提交时的加载画面
+      addLoading: false,
     };
+  },
+  computed: {
+    // el-upload上传时的地址和携带的请求头
+    uploadAction() {
+      return process.env.VUE_APP_BASE_API + "/file/upload";
+    },
+    headers() {
+      return {
+        authorization: `Bearer ` + getToken(),
+      };
+    },
   },
   methods: {
     // upload上传成功的钩子
     handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+      this.form.image = res.data.url;
     },
     // upload上传之前的钩子
     beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isJPG = file.type === "image/jpeg" || file.type === "image/png";
+      const isLt100M = file.size / 1024 / 1024 < 100;
 
       if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
+        this.$message.error("上传图片只能是 JPG 或 PNG 格式!");
       }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
+      if (!isLt100M) {
+        this.$message.error("上传头像图片大小不能超过 100MB!");
       }
-      return isJPG && isLt2M;
+      return isJPG && isLt100M;
+    },
+
+    // 提交处理
+    async addItem() {
+      this.addLoading = true;
+      let res = await api.postProjectAdd({ ...this.form, sort: -214748364 });
+      if (res.code == 200) {
+        this.addLoading = false;
+        this.$message({
+          type: "success",
+          message: "上传成功",
+        });
+      } else {
+        console.log(res);
+        this.addLoading = false;
+      }
     },
   },
 };

@@ -1,22 +1,22 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-title">网站访问量</div>
-    <div class="dateData">
+    <div class="dateData" v-loading="loading">
       <div class="dateDataItem">
         <p class="text">今日</p>
-        <p class="num">{{ day }}</p>
+        <p class="num">{{ uvInfo.uvDay }}</p>
       </div>
       <div class="dateDataItem">
         <p class="text">本周</p>
-        <p class="num">{{ week }}</p>
+        <p class="num">{{ uvInfo.uvWeek }}</p>
       </div>
       <div class="dateDataItem">
         <p class="text">本月</p>
-        <p class="num">{{ month }}</p>
+        <p class="num">{{ uvInfo.uvMonth }}</p>
       </div>
       <div class="dateDataItem">
         <p class="text">总访问量</p>
-        <p class="num">{{ total }}</p>
+        <p class="num">{{ uvInfo.uv }}</p>
       </div>
     </div>
   </div>
@@ -32,11 +32,23 @@ export default {
   },
   data() {
     return {
-      day: 23,
-      week: 233,
-      month: 2333,
-      total: 23333,
+      uvInfo: {},
+      loading: true,
     };
+  },
+  methods: {
+    async pageInit() {
+      let res = await this.$api.postTrackerQuery();
+      if (res.code == 200) {
+        this.uvInfo = res.data;
+        this.loading = false;
+      } else {
+        this.loading = false;
+      }
+    },
+  },
+  mounted() {
+    this.pageInit();
   },
 };
 </script>

@@ -55,7 +55,8 @@ const actions = {
         }
         const { userName, avatar } = user
         commit('SET_NAME', userName)
-        commit('SET_AVATAR', avatar)
+        // 因为后台返回数据没有avatar，所以这里直接用个链接代替
+        commit('SET_AVATAR', 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif')
         resolve(user)
       }).catch(error => {
         reject(error)

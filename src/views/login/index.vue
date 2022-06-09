@@ -73,8 +73,8 @@
       >
 
       <div class="tips">
-        <span style="margin-right: 20px">username: test</span>
-        <span> password: 123456</span>
+        <span style="margin-right: 20px">username: admin</span>
+        <span> password: admin123</span>
       </div>
     </el-form>
   </div>
@@ -103,8 +103,8 @@ export default {
     };
     return {
       loginForm: {
-        username: "test",
-        password: "123456",
+        username: "admin",
+        password: "admin123",
         code: "",
       },
       loginRules: {
