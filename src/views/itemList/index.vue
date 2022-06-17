@@ -68,11 +68,7 @@
             </el-table-column>
             <el-table-column label="操作">
               <template v-slot="{ row }">
-                <el-button
-                  type="text"
-                  @click="$router.push({ name: 'ItemDetail' })"
-                  >查看</el-button
-                >
+                <el-button type="text" @click="viewDetail(row)">查看</el-button>
                 <el-button type="text" @click="btnEdit(row)">编辑</el-button>
                 <el-button type="text" @click="removeItem(row)">删除</el-button>
                 <el-button type="text" @click="stick(row)">置顶</el-button>
@@ -393,6 +389,7 @@ export default {
           type: "success",
           message: `置顶成功`,
         });
+        this.getPageList();
       }
     },
 
@@ -440,18 +437,41 @@ export default {
     // 编辑提交
     async editSubmit() {
       this.editLoading = true;
-      let editRes = await api.putProjectEdit(this.itemDetail, {
-        params: {
-          projectId: this.itemDetail.projectId,
+      let editRes = await api.putProjectEdit(
+        {
+          ...this.itemDetail,
+          id: this.itemDetail.projectId,
         },
-      });
+        {
+          params: {
+            projectId: this.itemDetail.projectId,
+            // id: this.itemDetail.projectId,
+            // sort: -1,
+          },
+        }
+      );
       if (editRes.code == 200) {
         this.editLoading = false;
         this.dialogFormVisible = false;
+        this.getPageList();
+        this.$message({
+          type: "success",
+          message: `修改成功`,
+        });
       } else {
         this.editLoading = false;
       }
       console.log(editRes);
+    },
+
+    // 查看详情跳转
+    viewDetail(row) {
+      this.$router.push({
+        name: "ItemDetail",
+        query: {
+          projectId: row.projectId,
+        },
+      });
     },
   },
   mounted() {

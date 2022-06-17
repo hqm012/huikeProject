@@ -133,7 +133,11 @@ export default {
     // 提交处理
     async addItem() {
       this.addLoading = true;
-      let res = await api.postProjectAdd({ ...this.form, sort: -214748364 });
+      let res = await api.postProjectAdd({
+        ...this.form,
+        // sort: -214748364,
+        sort: -1,
+      });
       if (res.code == 200) {
         this.addLoading = false;
         this.$message({
